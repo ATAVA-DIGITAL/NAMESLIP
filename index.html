@@ -4,8 +4,213 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Digital Book Cover Generator</title>
-    <link rel="stylesheet" href="style.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        /* 🎨 ഈ പേജിന് ആവശ്യമായ എല്ലാ ഡിസൈനുകളും (CSS) ഇവിടെ ഉൾപ്പെടുത്തിയിട്ടുണ്ട് */
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #f0f2f5;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .main-container {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            max-width: 500px;
+            width: 100%;
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        h1 { color: #333; font-size: 24px; margin-bottom: 5px; }
+        p { color: #666; margin-top: 0; font-size: 14px; }
+
+        .form-container { display: flex; flex-direction: column; gap: 12px; margin-top: 15px; }
+        .input-group { display: flex; flex-direction: column; text-align: left; gap: 5px; }
+        .input-group label { font-weight: 600; color: #444; font-size: 14px; }
+        .input-group input, .input-group textarea { padding: 10px; border: 1px solid #ccc; border-radius: 6px; outline: none; font-family: inherit; }
+
+        .print-btn {
+            background-color: #5d6bca;
+            color: white;
+            border: none;
+            padding: 12px;
+            font-size: 15px;
+            font-weight: 600;
+            border-radius: 6px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+        /* 📄 A4 പേജ് ക്രമീകരണം (വെബ് സ്ക്രീനിൽ കാണാൻ) */
+        .preview-area {
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+        }
+
+        .a4-page {
+            background: white;
+            width: 210mm;
+            height: 297mm;
+            padding: 10mm; 
+            box-sizing: border-box;
+            display: grid;
+            grid-template-columns: repeat(2, 1fr); 
+            grid-template-rows: repeat(4, 1fr);    
+            gap: 8mm; 
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            border-radius: 8px;
+        }
+
+        /* 💳 കവർ ഡിസൈൻ (ATM കാർഡ് സൈസ്) */
+        .book-cover {
+            width: 100%;
+            height: 62mm; 
+            background-size: cover;
+            background-position: center;
+            border-radius: 8px; 
+            overflow: hidden;
+            position: relative;
+            border: 1px solid #ddd; 
+        }
+
+        .cover-overlay {
+            background: rgba(27, 16, 41, 0.78);
+            width: 100%;
+            height: 100%;
+            padding: 10px 15px; 
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .top-section {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .photo-box img {
+            width: 40px;  
+            height: 40px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 1.5px solid white;
+        }
+
+        .student-info {
+            text-align: right;
+            color: white;
+        }
+
+        .student-info h2 {
+            margin: 0;
+            font-size: 13px; 
+            font-weight: 700;
+        }
+
+        .student-info p {
+            margin: 1px 0 0 0;
+            color: #e0e0e0;
+            font-size: 10px;
+            font-weight: 600;
+        }
+
+        .subject-section {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-grow: 1;
+        }
+
+        .sub-title {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .sub-title .icon {
+            font-size: 18px; 
+        }
+
+        .sub-title h3 {
+            margin: 0;
+            color: white;
+            font-size: 18px; 
+            font-weight: 800;
+            letter-spacing: 1px;
+        }
+
+        .footer-section {
+            text-align: center;
+            color: white;
+        }
+
+        .line {
+            border: 0;
+            height: 1px;
+            background: rgba(255, 255, 255, 0.2);
+            margin-bottom: 5px;
+        }
+
+        .footer-section h4 {
+            margin: 0;
+            font-size: 10px; 
+            letter-spacing: 0.5px;
+            font-weight: 600;
+            color: #dfdfdf;
+        }
+
+        /* 🖨️ പ്രിന്റ് ചെയ്യുമ്പോൾ ഉള്ള സെറ്റിംഗ്സ് */
+        @media print {
+            html, body {
+                background: white !important;
+                margin: 0 !important;
+                padding: 0 !important;
+                width: 210mm;
+                height: 297mm;
+            }
+
+            .main-container {
+                display: none !important;
+            }
+
+            .preview-container {
+                display: block !important;
+                width: 210mm !important;
+            }
+
+            .preview-area {
+                gap: 0 !important;
+                display: grid !important;
+            }
+            
+            .a4-page {
+                width: 210mm !important;
+                height: 297mm !important;
+                padding: 10mm !important;
+                margin: 0 !important;
+                box-shadow: none !important;
+                border-radius: 0 !important;
+                display: grid !important;
+                page-break-after: always !important; 
+                page-break-inside: avoid !important;
+            }
+
+            .book-cover {
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+            }
+        }
+    </style>
 </head>
 <body>
 
@@ -48,8 +253,8 @@
     </div>
 
     <div class="preview-container">
-    <div id="printArea" class="preview-area"></div>
-</div>
+        <div id="printArea" class="preview-area"></div>
+    </div>
 
     <script>
         let studentPhotoData = "https://via.placeholder.com/150";
@@ -61,32 +266,26 @@
             const roll = document.getElementById('inputRoll').value ? "Roll: " + document.getElementById('inputRoll').value : "Roll: 10";
             const school = document.getElementById('inputSchool').value.toUpperCase() || "JALALIYYA SCHOOL";
             
-            // സബ്‌ജക്റ്റുകൾ വരികളായി വേർതിരിക്കുന്നു
             const subjectsText = document.getElementById('inputSubjects').value;
             let subjects = subjectsText.split('\n').filter(sub => sub.trim() !== "");
             
             if(subjects.length === 0) {
-                subjects = ["MATHEMATICS"]; // ഡിഫോൾട്ട് സബ്‌ജക്റ്റ്
+                subjects = ["MATHEMATICS", "ISLAMIC", "ENGLISH"]; 
             }
 
             const printArea = document.getElementById('printArea');
-            printArea.innerHTML = ""; // പഴയവ ക്ലിയർ ചെയ്യാൻ
+            printArea.innerHTML = ""; 
 
             let currentPage;
-            
-            // ഒരു A4 പേജിൽ പരമാവധി 2 സ്ലിപ്പുകൾ (// ഇതിന് മുൻപ് 2 ആയിരുന്നു, അത് മാറ്റി 8 ആക്കുക:
-const slipsPerPage = 8;)
-            const slipsPerPage = 2; 
+            const slipsPerPage = 8; 
 
             subjects.forEach((subject, index) => {
-                // ഓരോ 2 സ്ലിപ്പുകൾ കൂടുമ്പോഴും പുതിയ A4 പേജ് ഉണ്ടാക്കുന്നു
                 if (index % slipsPerPage === 0) {
                     currentPage = document.createElement('div');
                     currentPage.className = 'a4-page';
                     printArea.appendChild(currentPage);
                 }
 
-                // സ്ലിപ്പിന്റെ HTML ഘടന
                 const slipHtml = `
                     <div class="book-cover" style="background-image: url('${customBgData}');">
                         <div class="cover-overlay">
@@ -116,7 +315,6 @@ const slipsPerPage = 8;)
             });
         }
 
-        // സ്റ്റുഡന്റ് ഫോട്ടോ ലോഡ് ചെയ്യാൻ
         function loadPhoto(event) {
             var reader = new FileReader();
             reader.onload = function() {
@@ -128,7 +326,6 @@ const slipsPerPage = 8;)
             }
         }
 
-        // കസ്റ്റം ബാക്ക്ഗ്രൗണ്ട് ഫോട്ടോ ലോഡ് ചെയ്യാൻ
         function loadBackground(event) {
             var reader = new FileReader();
             reader.onload = function() {
@@ -140,7 +337,6 @@ const slipsPerPage = 8;)
             }
         }
 
-        // ആദ്യ തവണ പേജ് ലോഡ് ചെയ്യുമ്പോൾ കാണിക്കാൻ
         window.onload = updateCovers;
     </script>
 </body>
