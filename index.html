@@ -6,7 +6,6 @@
     <title>Digital Book Cover Generator</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&display=swap" rel="stylesheet">
     <style>
-        /* 🎨 ഈ പേജിന് ആവശ്യമായ എല്ലാ ഡിസൈനുകളും (CSS) ഇവിടെ ഉൾപ്പെടുത്തിയിട്ടുണ്ട് */
         body {
             font-family: 'Poppins', sans-serif;
             background-color: #f0f2f5;
@@ -35,6 +34,7 @@
         .input-group { display: flex; flex-direction: column; text-align: left; gap: 5px; }
         .input-group label { font-weight: 600; color: #444; font-size: 14px; }
         .input-group input, .input-group textarea { padding: 10px; border: 1px solid #ccc; border-radius: 6px; outline: none; font-family: inherit; }
+        .help-text { font-size: 11px; color: #888; margin-top: -3px; }
 
         .print-btn {
             background-color: #5d6bca;
@@ -48,7 +48,6 @@
             margin-top: 10px;
         }
 
-        /* 📄 A4 പേജ് ക്രമീകരണം (വെബ് സ്ക്രീനിൽ കാണാൻ) */
         .preview-area {
             display: flex;
             flex-direction: column;
@@ -69,7 +68,6 @@
             border-radius: 8px;
         }
 
-        /* 💳 കവർ ഡിസൈൻ (ATM കാർഡ് സൈസ്) */
         .book-cover {
             width: 100%;
             height: 62mm; 
@@ -169,7 +167,6 @@
             color: #dfdfdf;
         }
 
-        /* 🖨️ പ്രിന്റ് ചെയ്യുമ്പോൾ ഉള്ള സെറ്റിംഗ്സ് */
         @media print {
             html, body {
                 background: white !important;
@@ -224,8 +221,9 @@
                 <input type="file" id="inputPhoto" accept="image/*" onchange="loadPhoto(event)">
             </div>
             <div class="input-group">
-                <label>Custom Background:</label>
-                <input type="file" id="inputBg" accept="image/*" onchange="loadBackground(event)">
+                <label>Custom Backgrounds (Select Multiple):</label>
+                <input type="file" id="inputBg" accept="image/*" multiple onchange="loadMultipleBackgrounds(event)">
+                <span class="help-text">💡 Ctrl/Shift അമർത്തിപ്പിടിച്ച് ഒന്നിലധികം ചിത്രങ്ങൾ ഒരുമിച്ച് തിരഞ്ഞെടുക്കാം.</span>
             </div>
             <div class="input-group">
                 <label>Student Name:</label>
@@ -258,7 +256,8 @@
 
     <script>
         let studentPhotoData = "https://via.placeholder.com/150";
-        let customBgData = "https://images.unsplash.com/photo-1511497584788-876760111969?q=80&w=1000&auto=format&fit=crop";
+        // ഡിഫോൾട്ട് ബാക്ക്ഗ്രൗണ്ട് ഇമേജ് ലിസ്റ്റ്
+        let customBgList = ["https://images.unsplash.com/photo-1511497584788-876760111969?q=80&w=1000&auto=format&fit=crop"];
 
         function updateCovers() {
             const name = document.getElementById('inputName').value || "MUHAMMED ZIYAD KV";
@@ -286,8 +285,12 @@
                     printArea.appendChild(currentPage);
                 }
 
+                // ഓരോ സബ്‌ജക്റ്റിനും വെവ്വേറെ ഇമേജ് നൽകുന്നു. 
+                // അപ്‌ലോഡ് ചെയ്ത ചിത്രങ്ങളേക്കാൾ കൂടുതൽ സബ്‌ജക്റ്റ് ഉണ്ടെങ്കിൽ ലിസ്റ്റിലെ ആദ്യത്തെ ചിത്രം വീണ്ടും എടുക്കും.
+                const currentBg = customBgList[index % customBgList.length];
+
                 const slipHtml = `
-                    <div class="book-cover" style="background-image: url('${customBgData}');">
+                    <div class="book-cover" style="background-image: url('${currentBg}');">
                         <div class="cover-overlay">
                             <div class="top-section">
                                 <div class="photo-box">
@@ -326,14 +329,26 @@
             }
         }
 
-        function loadBackground(event) {
-            var reader = new FileReader();
-            reader.onload = function() {
-                customBgData = reader.result;
-                updateCovers();
-            }
-            if(event.target.files[0]) {
-                reader.readAsDataURL(event.target.files[0]);
+        // ഒന്നിലധികം ബാക്ക്ഗ്രൗണ്ട് ഇമേജുകൾ ഒന്നിച്ച് റീഡ് ചെയ്യാൻ
+        function loadMultipleBackgrounds(event) {
+            const files = event.target.files;
+            if (files.length === 0) return;
+
+            customBgList = []; // പഴയ ലിസ്റ്റ് ക്ലിയർ ചെയ്യുന്നു
+            let loadedCount = 0;
+
+            for (let i = 0; i < files.length; i++) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    customBgList.push(e.target.result);
+                    loadedCount++;
+                    
+                    // എല്ലാ ചിത്രങ്ങളും ലോഡ് ആയിക്കഴിഞ്ഞാൽ കവർ അപ്‌ഡേറ്റ് ചെയ്യും
+                    if (loadedCount === files.length) {
+                        updateCovers();
+                    }
+                }
+                reader.readAsDataURL(files[i]);
             }
         }
 
