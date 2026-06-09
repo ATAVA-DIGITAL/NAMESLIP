@@ -68,28 +68,30 @@
             border-radius: 8px;
         }
 
-        .book-cover {
-            width: 100%;
-            height: 62mm; 
-            background-size: cover;
-            background-position: center;
-            border-radius: 8px; 
-            overflow: hidden;
-            position: relative;
-            border: 1px solid #ddd; 
-        }
+        /* 1. ചിത്രത്തിന്റെ ക്വാളിറ്റി കൂട്ടാൻ ഇത് മാറ്റുക */
+.book-cover {
+    width: 100%;
+    height: 62mm; 
+    background-size: cover;      /* ചിത്രം കാർഡിന് പാകത്തിന് കൃത്യമായി വരാൻ */
+    background-position: center; /* ചിത്രത്തിന്റെ നടുഭാഗം കൃത്യമായി കാണിക്കാൻ */
+    background-repeat: no-repeat;
+    border-radius: 8px; 
+    overflow: hidden;
+    position: relative;
+    border: 1px solid #ddd; 
+}
 
-        .cover-overlay {
-            background: rgba(27, 16, 41, 0.78);
-            width: 100%;
-            height: 100%;
-            padding: 10px 15px; 
-            box-sizing: border-box;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-        }
-
+/* 2. ബാക്ക്ഗ്രൗണ്ട് തെളിഞ്ഞു കാണാൻ ഈ ഒപ്പസിറ്റി (0.35) കുറച്ച കോഡ് മാറ്റുക */
+.cover-overlay {
+    background: rgba(0, 0, 0, 0.35); /* ഇവിടെ 0.78 എന്നത് മാറ്റി 0.35 ആക്കി കട്ടി കുറച്ചു */
+    width: 100%;
+    height: 100%;
+    padding: 10px 15px; 
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
         .top-section {
             display: flex;
             justify-content: space-between;
