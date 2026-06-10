@@ -26,12 +26,14 @@
             margin-bottom: 25px;
         }
 
-        /* 🎯 Site thurakkumbol mukalil kaanan ulla Company Logo Container */
+        /* 🎯 സൈറ്റ് തുറക്കുമ്പോൾ മുകളിൽ കാണാൻ ഉള്ള കമ്പനി ലോഗോ */
         .company-logo-container {
             margin-bottom: 15px;
             display: flex;
+            flex-direction: column;
             justify-content: center;
             align-items: center;
+            gap: 8px;
         }
 
         .company-logo {
@@ -113,7 +115,7 @@
             align-items: center;
         }
 
-        /* 📸 Nameslip-il kuttiyude photo said-il krithyamayi varanulla puthiya style */
+        /* 📸 നെയിംസ്ലിപ്പിൽ കുട്ടിയുടെ ഫോട്ടോ സൈഡിൽ വരാൻ ഉള്ള സ്റ്റൈൽ */
         .student-photo-box {
             width: 50px;
             height: 50px;
@@ -124,7 +126,6 @@
             background: rgba(255, 255, 255, 0.2);
         }
 
-        /* Kuttiyude photo illenkil space blank aayi kidakkan */
         .photo-placeholder {
             width: 50px;
             height: 50px;
@@ -201,24 +202,29 @@
 <body>
 
     <div class="main-container">
+        <!-- 🎯 മുകളിൽ കമ്പനി ലോഗോ കാണിക്കുന്ന ഇടം -->
         <div class="company-logo-container">
             <img class="company-logo" id="mainLogo" src="LOGO 2.jpg.jpg" alt="ATAVA Logo">
+            <!-- 🔄 ലോഗോ ഓട്ടോമാറ്റിക് ആയി വന്നില്ലെങ്കിൽ മാനുവൽ ആയി സെറ്റ് ചെയ്യാനുള്ള ചെറിയ ബട്ടൺ (പ്രിന്റ് ചെയ്യുമ്പോൾ ഇത് കാണില്ല) -->
+            <input type="file" id="uploadLogo" accept="image/*" onchange="loadCompanyLogo(event)" style="font-size: 11px; max-width: 180px;">
         </div>
 
         <h1>📚 Book Cover Generator</h1>
-        <p>Information nalki professional cover page undakku!</p>
+        <p>വിവരങ്ങൾ നൽകി പ്രൊഫഷണൽ കവർ പേജ് ഉണ്ടാക്കൂ!</p>
         
         <div class="form-container">
+            <!-- 👦 കുട്ടിയുടെ ഫോട്ടോ അപ്‌ലോഡ് ചെയ്യാനുള്ള ഓപ്ഷൻ -->
             <div class="input-group" style="background: #eef1ff; padding: 10px; border-radius: 8px; border: 1px dashed #5d6bca;">
                 <label style="color: #4a55a2;">👦 Upload Student Photo:</label>
                 <input type="file" id="inputPhoto" accept="image/*" onchange="loadStudentPhoto(event)">
-                <span class="hint-text" style="color: #666;">Kuttiyude photo ivide upload cheyyam.</span>
+                <span class="hint-text" style="color: #666;">കുട്ടിയുടെ ഫോട്ടോ ഇവിടെ അപ്‌ലോഡ് ചെയ്യാം.</span>
             </div>
 
+            <!-- 🖼️ ബാക്ക്ഗ്രൗണ്ട് അപ്‌ലോഡ് ഓപ്ഷൻ -->
             <div class="input-group">
                 <label>Custom Backgrounds (Select Multiple):</label>
                 <input type="file" id="inputBg" accept="image/*" multiple onchange="loadMultipleBackgrounds(event)">
-                <span class="hint-text">💡 Ctrl/Shift amarthingane onniladhikam chithrangal orumich thiranjedukkam.</span>
+                <span class="hint-text">💡 Ctrl/Shift അമർത്തിപ്പിടിച്ച് ഒന്നിലധികം ചിത്രങ്ങൾ ഒരുമിച്ച് തിരഞ്ഞെടുക്കാം.</span>
             </div>
             
             <div class="input-group">
@@ -257,6 +263,18 @@
         window.addEventListener('DOMContentLoaded', () => {
             updateCovers();
         });
+
+        // 🔄 ഹോസ്റ്റിംഗിൽ ഫയൽ നെയിം മാറിയാലും ലോഗോ സെറ്റ് ചെയ്യാനുള്ള ഫങ്ക്ഷൻ
+        function loadCompanyLogo(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    document.getElementById('mainLogo').src = e.target.result;
+                }
+                reader.readAsDataURL(file);
+            }
+        }
 
         function loadStudentPhoto(event) {
             const file = event.target.files[0];
@@ -303,7 +321,6 @@
                     infoLine = `${className} ${className && roll ? '|' : ''} ${roll}`;
                 }
 
-                // 📸 Nameslip said-il kuttiyude photo mathram varanulla reethi
                 let photoHtml = '<div class="photo-placeholder"></div>';
                 if (studentPhotoData) {
                     photoHtml = `<img src="${studentPhotoData}" class="student-photo-box" alt="Student">`;
@@ -313,6 +330,7 @@
                     <div class="book-cover" style="background-image: url('${currentBg}');">
                         <div class="cover-overlay">
                             <div class="top-section">
+                                <!-- നെയിംസ്ലിപ്പിൽ കുട്ടിയുടെ ഫോട്ടോ മാത്രം (ലോഗോ ഇല്ല) -->
                                 ${photoHtml}
                                 <div class="student-info">
                                     <h2>${name}</h2>
@@ -324,7 +342,6 @@
                                     <h3>${subject.toUpperCase()}</h3>
                                 </div>
                             </div>
-                            <div class="preview-container"></div>
                             <div class="footer-section">
                                 <hr class="line">
                                 <h4>${school}</h4>
